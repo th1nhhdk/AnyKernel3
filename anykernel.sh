@@ -4,7 +4,7 @@
 ### AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=KernelSU Kernel by th1nhhdk @ github
+kernel.string=KernelSU Kernel for pdx203 by th1nhhdk @ github
 do.devicecheck=1
 do.modules=0
 do.systemless=0
