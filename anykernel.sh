@@ -16,15 +16,8 @@ supported.patchlevels=
 '; } # end properties
 
 ### AnyKernel install
-# begin attributes
-attributes() {
-set_perm_recursive 0 0 755 644 $ramdisk/*;
-set_perm_recursive 0 0 750 750 $ramdisk/init* $ramdisk/sbin;
-} # end attributes
-
-
 ## boot shell variables
-block=/dev/block/platform/soc/1d84000.ufshc/by-name/boot;
+block=/dev/block/bootdevice/by-name/boot;
 is_slot_device=1;
 ramdisk_compression=auto;
 patch_vbmeta_flag=auto;
