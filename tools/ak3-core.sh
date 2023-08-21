@@ -212,10 +212,8 @@ repack_ramdisk() {
   [ $? != 0 ] && packfail=1;
 
   cd $home;
-  if [ ! "$no_magisk_check" ]; then
-    $bin/magiskboot cpio ramdisk-new.cpio test;
-    magisk_patched=$?;
-  fi;
+  $bin/magiskboot cpio ramdisk-new.cpio test;
+  magisk_patched=$?;
   [ $((magisk_patched & 3)) -eq 1 ] && $bin/magiskboot cpio ramdisk-new.cpio "extract .backup/.magisk $split_img/.magisk";
   if [ "$comp" ]; then
     $bin/magiskboot compress=$comp ramdisk-new.cpio;
@@ -317,7 +315,7 @@ flash_boot() {
     done;
     case $kernel in
       *Image*)
-        if [ ! "$magisk_patched" -a ! "$no_magisk_check" ]; then
+        if [ ! "$magisk_patched" ]; then
           $bin/magiskboot cpio ramdisk.cpio test;
           magisk_patched=$?;
         fi;
@@ -850,6 +848,17 @@ setup_ak() {
     touch vendor_v3_setup;
   fi;
 
+  # allow multi-partition ramdisk modifying configurations (using reset_ak)
+  if [ "$block" ] && [ ! -d "$ramdisk" -a ! -d "$patch" ]; then
+    blockfiles=$home/$(basename $block)-files;
+    if [ "$(ls $blockfiles 2>/dev/null)" ]; then
+      cp -af $blockfiles/* $home;
+    else
+      mkdir $blockfiles;
+    fi;
+    touch $blockfiles/current;
+  fi;
+
   # target block partition detection enabled by block=<partition filename> or auto (from anykernel.sh)
   case $block in
     /dev/*)
@@ -906,22 +915,6 @@ setup_ak() {
   if [ ! "$no_block_display" ]; then
     ui_print "$block";
   fi;
-  
-  # allow multi-partition ramdisk modifying configurations (using reset_ak)
-  name=$(basename $block | sed -e 's/_a$//' -e 's/_b$//');
-  if [ "$block" ] && [ ! -d "$ramdisk" -a ! -d "$patch" ]; then
-    blockfiles=$home/$name-files;
-    if [ "$(ls $blockfiles 2>/dev/null)" ]; then
-      cp -af $blockfiles/* $home;
-    else
-      mkdir $blockfiles;
-    fi;
-    touch $blockfiles/current;
-  fi;
-
-  # run attributes function for current block if it exists
-  type attributes >/dev/null 2>&1 && attributes; # backwards compatibility
-  type ${name}_attributes >/dev/null 2>&1 && ${name}_attributes;
 }
 ###
 
