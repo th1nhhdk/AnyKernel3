@@ -12,7 +12,7 @@ do.cleanup=1
 do.cleanuponabort=0
 device.name1=pdx203
 device.name2=XQ-AT52
-supported.versions=13
+supported.versions=13 - 14
 supported.patchlevels=
 supported.vendorpatchlevels=
 '; } # end properties
